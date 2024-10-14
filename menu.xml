@@ -1,0 +1,67 @@
+<?xml version="1.0" standalone="yes"?>
+<breakfast_menu>
+  <food>
+    <name>Belgian Waffles</name>
+    <price>$5.95</price>
+    <description>
+			Two of our famous Belgian Waffles with plenty of real maple syrup
+		</description>
+    <calories>650</calories>
+  </food>
+  <food>
+    <name>Strawberry Belgian Waffles</name>
+    <price>$7.95</price>
+    <description>
+			Light Belgian waffles covered with strawberries and whipped cream
+		</description>
+    <calories>900</calories>
+  </food>
+  <food>
+    <name>Berry-Berry Belgian Waffles</name>
+    <price>$8.95</price>
+    <description>
+			Light Belgian waffles covered with an assortment of fresh berries and whipped cream
+		</description>
+    <calories>900</calories>
+  </food>
+  <food>
+    <name>French Toast</name>
+    <price>$4.50</price>
+    <description>
+			Thick slices made from our homemade sourdough bread
+		</description>
+    <calories>600</calories>
+  </food>
+  <food>
+    <name>Homestyle Breakfast</name>
+    <price>$6.95</price>
+    <description>
+			Two eggs, bacon or sausage, toast, and our ever-popular hash browns
+		</description>
+    <calories>950</calories>
+  </food>
+  <food>
+    <name>Piim</name>
+    <price>$9,398893</price>
+    <description>Väga maitsev </description>
+    <calories>32</calories>
+  </food>
+  <food>
+    <name>Jäätis</name>
+    <price>$8,451593</price>
+    <description>Väga maitsev </description>
+    <calories>226</calories>
+  </food>
+  <food>
+    <name>ananass</name>
+    <price>$7,8531556</price>
+    <description>Väga maitsev </description>
+    <calories>823</calories>
+  </food>
+  <food>
+    <name>apple</name>
+    <price>$0,8748865</price>
+    <description>Väga maitsev </description>
+    <calories>854</calories>
+  </food>
+</breakfast_menu>

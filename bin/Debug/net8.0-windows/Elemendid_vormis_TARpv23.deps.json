@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "Elemendid_vormis_TARpv23/1.0.0": {
+        "runtime": {
+          "Elemendid_vormis_TARpv23.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Elemendid_vormis_TARpv23/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
