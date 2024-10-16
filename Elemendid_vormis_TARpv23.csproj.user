@@ -5,6 +5,9 @@
     <Compile Update="Kalkulaator.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="KolmasVorm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="StartVorm.cs">
       <SubType>Form</SubType>
     </Compile>

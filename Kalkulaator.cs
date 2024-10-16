@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,137 +10,179 @@ using System.Windows.Forms;
 
 namespace Elemendid_vormis_TARpv23
 {
-    public partial class Kalkulaator : Form // Убедитесь, что 'partial' здесь
+    public partial class Kalkulaator : Form
     {
-        private TextBox txtInput;
-        private Button[] answerBoxes;
-        private Button btnStart;
-        private Label lblTimeLeft;
-        private System.Windows.Forms.Timer timer; // Явное указание на таймер
-        private int timeLeft = 30; // Время для теста в секундах
-        private string[] questions;
-        private int[] answers;
+        private TextBox[] vastuseSisendid; // Vastuse sisestamise tekstikastide massiiv
+        private Button btnKontrolliVastuseid; // Vastuste kontrollimise nupp
+        private Button btnUuendaKüsimused; // Küsimuste uuendamise nupp
+        private Label lblAegAlles;
+        private System.Windows.Forms.Timer taimer;
+        private int aegaAlles = 30;
+        private string[] küsimused;
+        private int[] vastused;
+        private Random juhuslik;
 
         public Kalkulaator()
         {
-            
-            CreateCalculatorUI();
-            LoadQuestions();
+            juhuslik = new Random();
+            LooKalkulaatoriUI();
+            GenereeriJuhuslikudKüsimused(); // Genereerime juhuslikud küsimused programmi käivitamisel
+            AlustaViktoriini(); // Alustame viktoriini kohe
         }
 
-       
-
-        private void CreateCalculatorUI()
+        private void LooKalkulaatoriUI()
         {
-            this.Text = "Math Quiz";
-            this.Size = new Size(300, 400);
+            this.Text = "Matemaatiline Test";
+            this.Size = new Size(400, 500); 
 
-            lblTimeLeft = new Label
+            lblAegAlles = new Label
             {
                 Location = new Point(20, 20),
                 Width = 240,
                 Font = new Font("Arial", 14)
             };
-            this.Controls.Add(lblTimeLeft);
+            this.Controls.Add(lblAegAlles);
 
-            // Создание кнопок для ответов
-            answerBoxes = new Button[4];
+            // Loon tekstiväljad vastuste sisestamiseks ja sildid küsimuste jaoks
+            vastuseSisendid = new TextBox[4];
             for (int i = 0; i < 4; i++)
             {
-                answerBoxes[i] = new Button { Text = "0", Font = new Font("Arial", 18), Location = new Point(20, 60 + i * 60), Size = new Size(240, 50) };
-                this.Controls.Add(answerBoxes[i]);
+                Label lblKüsimus = new Label
+                {
+                    Font = new Font("Arial", 18),
+                    Location = new Point(20, 60 + i * 60),
+                    Size = new Size(200, 50)
+                };
+                this.Controls.Add(lblKüsimus);
+
+                vastuseSisendid[i] = new TextBox
+                {
+                    Font = new Font("Arial", 18),
+                    Location = new Point(230, 60 + i * 60),
+                    Size = new Size(100, 50)
+                };
+                this.Controls.Add(vastuseSisendid[i]);
             }
 
-            // Кнопка для начала теста
-            btnStart = new Button { Text = "Start the quiz", Location = new Point(20, 300), Size = new Size(240, 50) };
-            btnStart.Click += BtnStart_Click;
-            this.Controls.Add(btnStart);
+            // Nupp vastuste kontrollimiseks
+            btnKontrolliVastuseid = new Button { Text = "Kontrolli vastuseid", Location = new Point(20, 370), Size = new Size(240, 50) };
+            btnKontrolliVastuseid.Click += BtnKontrolliVastuseid_Click;
+            this.Controls.Add(btnKontrolliVastuseid);
 
-            // Таймер
-            timer = new System.Windows.Forms.Timer(); // Явное указание на таймер
-            timer.Interval = 1000; // Интервал 1 секунда
-            timer.Tick += Timer_Tick;
+            // Nupp küsimuste uuendamiseks
+            btnUuendaKüsimused = new Button { Text = "Uuenda küsimusi", Location = new Point(20, 430), Size = new Size(240, 50) };
+            btnUuendaKüsimused.Click += BtnUuendaKüsimused_Click;
+            this.Controls.Add(btnUuendaKüsimused);
+
+            // Taimer
+            taimer = new System.Windows.Forms.Timer();
+            taimer.Interval = 1000;
+            taimer.Tick += Taimer_Tick;
         }
 
-        private void LoadQuestions()
+        private void GenereeriJuhuslikudKüsimused()
         {
-            // Пример вопросов и ответов
-            questions = new string[]
+            küsimused = new string[4];
+            vastused = new int[4];
+
+            for (int i = 0; i < 4; i++)
             {
-            "26 + 34 = ?",
-            "47 - 26 = ?",
-            "3 × 3 = ?",
-            "64 ÷ 8 = ?"
-            };
+                int arv1 = juhuslik.Next(1, 50);
+                int arv2 = juhuslik.Next(1, 50);
+                int tehe = juhuslik.Next(0, 4); // Valime juhuslikult operatsiooni: +, -, *, /
 
-            answers = new int[] { 60, 21, 9, 8 };
-        }
+                switch (tehe)
+                {
+                    case 0:
+                        küsimused[i] = $"{arv1} + {arv2} = ?";
+                        vastused[i] = arv1 + arv2;
+                        break;
+                    case 1:
+                        küsimused[i] = $"{arv1} - {arv2} = ?";
+                        vastused[i] = arv1 - arv2;
+                        break;
+                    case 2:
+                        küsimused[i] = $"{arv1} × {arv2} = ?";
+                        vastused[i] = arv1 * arv2;
+                        break;
+                    case 3:
+                        küsimused[i] = $"{arv1} ÷ {arv2} = ?";
+                        vastused[i] = arv1 / arv2; // Täisarvuline jagamine
+                        break;
+                }
 
-        private void BtnStart_Click(object sender, EventArgs e)
-        {
-            timeLeft = 30; // Сброс времени
-            lblTimeLeft.Text = $"Time Left: {timeLeft} seconds";
-            timer.Start(); // Запуск таймера
-
-            // Отображение вопросов
-            for (int i = 0; i < answerBoxes.Length; i++)
-            {
-                answerBoxes[i].Text = $"{questions[i]}";
-                answerBoxes[i].Click += AnswerBox_Click; // Подписка на событие клика
+                // Kuvame küsimused tekstiväljade kõrvale
+                Controls.OfType<Label>().ElementAt(i + 1).Text = küsimused[i];
             }
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void AlustaViktoriini()
         {
-            if (timeLeft > 0)
+            aegaAlles = 30;
+            lblAegAlles.Text = $"Aega alles: {aegaAlles} sekundit";
+            taimer.Start();
+        }
+
+        private void Taimer_Tick(object sender, EventArgs e)
+        {
+            if (aegaAlles > 0)
             {
-                timeLeft--;
-                lblTimeLeft.Text = $"Time Left: {timeLeft} seconds";
+                aegaAlles--;
+                lblAegAlles.Text = $"Aega alles: {aegaAlles} sekundit";
             }
             else
             {
-                timer.Stop();
-                MessageBox.Show("Время истекло!");
-                ResetQuiz();
+                taimer.Stop();
+                MessageBox.Show("Aeg sai läbi!");
+                LähtestaViktoriin();
             }
         }
 
-        private void AnswerBox_Click(object sender, EventArgs e)
+        private void BtnKontrolliVastuseid_Click(object sender, EventArgs e)
         {
-            Button clickedButton = sender as Button;
-            if (clickedButton != null) // Проверка на null
+            // Peata taimer vastuste kontrollimise ajal
+            taimer.Stop();
+
+            for (int i = 0; i < 4; i++)
             {
-                int index = Array.IndexOf(answerBoxes, clickedButton);
-                if (index != -1)
+                if (int.TryParse(vastuseSisendid[i].Text, out int kasutajaVastus))
                 {
-                    string answer = Microsoft.VisualBasic.Interaction.InputBox("Введите ваш ответ:", "Ваш ответ");
-                    if (int.TryParse(answer, out int userAnswer))
+                    if (kasutajaVastus == vastused[i])
                     {
-                        if (userAnswer == answers[index])
-                        {
-                            MessageBox.Show("Правильно!");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Неправильно! Правильный ответ: " + answers[index]);
-                        }
+                        MessageBox.Show($"Küsimus {i + 1}: Õige!");
                     }
                     else
                     {
-                        MessageBox.Show("Введите числовое значение.");
+                        MessageBox.Show($"Küsimus {i + 1}: Vale! Õige vastus: {vastused[i]}");
                     }
+                }
+                else
+                {
+                    MessageBox.Show($"Küsimus {i + 1}: Palun sisestage number.");
                 }
             }
         }
 
-        private void ResetQuiz()
+
+        private void BtnUuendaKüsimused_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < answerBoxes.Length; i++)
+            // Uuendame küsimused ja taaskäivitame taimeri
+            GenereeriJuhuslikudKüsimused();
+            AlustaViktoriini(); // Taaskäivitage taimer ja viktoriin
+        }
+
+        private void LähtestaViktoriin()
+        {
+            for (int i = 0; i < vastuseSisendid.Length; i++)
             {
-                answerBoxes[i].Text = "0";
+                vastuseSisendid[i].Text = string.Empty;
             }
-            lblTimeLeft.Text = "Time Left: 30 seconds";
+            lblAegAlles.Text = "Aega alles: 30 sekundit";
+        }
+
+        private void Kalkulaator_Load(object sender, EventArgs e)
+        {
+
         }
     }
-
 }
