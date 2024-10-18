@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using Microsoft.VisualBasic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace Elemendid_vormis_TARpv23
 {
     public partial class StartVorm : Form
     {
-        List<string> elemendid = new List<string> { "Nupp", "Silt", "Pilt", "Märkeruut", "Raadionupp", "Tekstikast", "Loetelu", "Tabel", "Dialoogi aknad", "Kalkulaator" };
+        List<string> elemendid = new List<string> { "Nupp", "Silt", "Pilt", "Märkeruut", "Raadionupp", "Tekstikast", "Loetelu", "Tabel", "Dialoogi aknad", "Kalkulaator", "Game" };
 
         List<string> rbtn_list = new List<string> { "Üks", "Kaks", "Kolm" };
 
@@ -82,9 +83,11 @@ namespace Elemendid_vormis_TARpv23
             btnKolmasVorm.Text = "Ava Kolmas Vorm";
             btnKolmasVorm.Height = 50;
             btnKolmasVorm.Width = 150;
-            btnKolmasVorm.Location = new Point(150, 460); 
+            btnKolmasVorm.Location = new Point(150, 320); 
             btnKolmasVorm.Click += BtnKolmasVorm_Click; 
-            Controls.Add(btnKolmasVorm); 
+            Controls.Add(btnKolmasVorm);
+            
+
         }
         int tt = 0;
         private void Pbox_DoubleClick(object? sender, EventArgs e)
@@ -124,10 +127,10 @@ namespace Elemendid_vormis_TARpv23
 
         private void BtnKolmasVorm_Click(object? sender, EventArgs e)
         {
-
-            KolmasVorm kolmasVorm = new KolmasVorm(400, 400); // Create an instance of KolmasVorm
-            kolmasVorm.Show(); // Show the KolmasVorm
+            KolmasVorm kolmasVorm = new KolmasVorm();
+            kolmasVorm.Show();
         }
+
 
 
 
@@ -257,6 +260,12 @@ namespace Elemendid_vormis_TARpv23
             {
                 Controls.Add(btnCalculator); // Добавляем кнопку калькулятора на форму при выборе узла
             }
+            else if (e.Node.Text == "Game") 
+            {
+                Controls.Add(btnKolmasVorm);
+            }
+
+
 
         }
 

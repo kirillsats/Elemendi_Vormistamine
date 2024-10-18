@@ -4,79 +4,59 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Elemendid_vorm_TARpv23
+namespace Elemendid_vormis_TARpv23
 {
     public partial class KolmasVorm : Form
     {
-        List<int> numbers = new List<int> { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6 };
-        string firstChoice, secondChoice;
-        int tries;
-        List<PictureBox> pictures = new List<PictureBox>();
-        PictureBox picA, picB;
-        Label lblStatus, lblTimeLeft;
-        System.Windows.Forms.Timer GameTimer;
-        int totalTime = 60, countDownTime;
-        bool gameOver = false;
+        // Инициализация данных игры
+        List<int> numbers = new List<int> { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8 }; // 16 карточек (8 пар)
+        string firstChoice, secondChoice; // выбранные карточки
+        int tries; // количество попыток
+        List<PictureBox> pictures = new List<PictureBox>(); // список изображений
+        PictureBox picA, picB; // выбранные изображения
+        Label lblStatus, lblTimeLeft; // метки статуса и времени
+        DateTime startTime; // время начала игры
+        int totalTime = 60; // общее время в секундах
+        bool gameOver = false; // флаг окончания игры
 
-        public KolmasVorm(int width, int height)
+        public KolmasVorm()
         {
-            this.Width = width;
-            this.Height = height;
-            this.ClientSize = new Size(width, height);
-            GameTimer = new System.Windows.Forms.Timer { Interval = 1000 };
-            GameTimer.Tick += TimerEvent;
+            // Настройка формы
+            this.Width = 700;
+            this.Height = 600;
 
-            lblStatus = new Label { Location = new Point(20, 200), Size = new Size(200, 30) };
-            lblTimeLeft = new Label { Location = new Point(20, 230), Size = new Size(200, 30) };
+            // Настройка элементов интерфейса
+            Label lblTitle = new Label();
+            lblTitle.Text = "Kolmas Vorm";
+            lblTitle.Location = new Point(100, 100);
+            this.Controls.Add(lblTitle);
+
+            lblStatus = new Label();
+            lblStatus.Location = new Point(50, 100);
             this.Controls.Add(lblStatus);
+
+            lblTimeLeft = new Label();
+            lblTimeLeft.Location = new Point(50, 120);
             this.Controls.Add(lblTimeLeft);
 
-            LoadPictures();
+            LoadPictures(); // Загрузка изображений
+            RestartGame(); // Начало игры
         }
 
-        private void TimerEvent(object sender, EventArgs e)
-        {
-            countDownTime--;
-            lblTimeLeft.Text = "Jääb aega: " + countDownTime;
-            if (countDownTime < 1)
-            {
-                GameOver("Aeg on läbi, sa kaotasid");
-                foreach (PictureBox x in pictures)
-                {
-                    if (x.Tag != null)
-                    {
-                        try
-                        {
-                            x.Image = Image.FromFile(@"..\..\..\princ.png");
-                            x.Image = Image.FromFile(@"..\..\..\kot.png");
-                            x.Image = Image.FromFile(@"..\..\..\shokshrek.png");
-                            x.Image = Image.FromFile(@"..\..\..\shrek.png");
-                            x.Image = Image.FromFile(@"..\..\..\osel.png");
-                            x.Image = Image.FromFile(@"..\..\..\minishrek.png");
-                            x.Image = Image.FromFile(@"..\..\..\da.png");
-                            x.Image = Image.FromFile(@"..\..\..\fiona.png");
-
-                        }
-                        catch
-                        {
-                            // Handle image loading exception (e.g., log it or show a message)
-                        }
-                    }
-                }
-            }
-        }
-
+        // Функция загрузки изображений
         private void LoadPictures()
         {
+            numbers = numbers.OrderBy(x => Guid.NewGuid()).ToList(); // Перемешивание номеров
             int leftPos = 20, topPos = 20, rows = 0;
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < numbers.Count; i++)
             {
                 PictureBox newPic = new PictureBox
                 {
                     Height = 50,
                     Width = 50,
                     BackColor = Color.LightGray,
-                    SizeMode = PictureBoxSizeMode.StretchImage
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    Tag = numbers[i].ToString() // Присвоение тега номеру
                 };
                 newPic.Click += NewPic_Click;
                 pictures.Add(newPic);
@@ -85,6 +65,7 @@ namespace Elemendid_vorm_TARpv23
                 this.Controls.Add(newPic);
                 leftPos += 60;
 
+                // Конец ряда
                 if (++rows == 4)
                 {
                     leftPos = 20;
@@ -92,7 +73,6 @@ namespace Elemendid_vorm_TARpv23
                     rows = 0;
                 }
             }
-            RestartGame();
         }
 
         private void NewPic_Click(object sender, EventArgs e)
@@ -100,8 +80,18 @@ namespace Elemendid_vorm_TARpv23
             if (gameOver) return;
 
             PictureBox clickedPic = sender as PictureBox;
-            if (clickedPic.Image != null) return; // Prevent clicking already revealed pictures
 
+            // Если изображение уже открыто, ничего не делаем
+            if (clickedPic.Image != null) return;
+
+            // Проверяем, сколько времени прошло с начала игры
+            if ((DateTime.Now - startTime).TotalSeconds >= totalTime)
+            {
+                GameOver("Aeg on läbi, sa kaotasid");
+                return;
+            }
+
+            // Если первый выбор не сделан
             if (firstChoice == null)
             {
                 picA = clickedPic;
@@ -109,15 +99,17 @@ namespace Elemendid_vorm_TARpv23
                 {
                     try
                     {
-                        picA.Image = Image.FromFile(@"..\..\..\" + (string)picA.Tag + ".png");
+                        // Загрузка изображения и назначение первого выбора
+                        picA.Image = LoadImageByTag((string)picA.Tag); // Загрузка изображения по тегу
                         firstChoice = (string)picA.Tag;
                     }
                     catch
                     {
-                        // Handle image loading exception
+                        // Обработка ошибок загрузки изображений
                     }
                 }
             }
+            // Если первый выбор сделан, делаем второй выбор
             else if (secondChoice == null)
             {
                 picB = clickedPic;
@@ -125,40 +117,68 @@ namespace Elemendid_vorm_TARpv23
                 {
                     try
                     {
-                        picB.Image = Image.FromFile(@"..\..\..\" + (string)picB.Tag + ".png");
+                        // Загрузка изображения и назначение второго выбора
+                        picB.Image = LoadImageByTag((string)picB.Tag); // Загрузка изображения по тегу
                         secondChoice = (string)picB.Tag;
                     }
                     catch
                     {
-                        // Handle image loading exception
+                        // Обработка ошибок загрузки изображений
                     }
                 }
 
+                // Проверяем, совпадают ли выбранные изображения
                 CheckPictures(picA, picB);
             }
         }
 
+        // Функция загрузки изображения по тегу
+        private Image LoadImageByTag(string tag)
+        {
+            switch (tag)
+            {
+                case "1":
+                    return Image.FromFile(@"..\..\..\princ.png"); // картинка 1
+                case "2":
+                    return Image.FromFile(@"..\..\..\kot.png"); // картинка 2
+                case "3":
+                    return Image.FromFile(@"..\..\..\shokshrek.png"); // картинка 3
+                case "4":
+                    return Image.FromFile(@"..\..\..\shrek.png"); // картинка 4
+                case "5":
+                    return Image.FromFile(@"..\..\..\osel.png"); // картинка 5
+                case "6":
+                    return Image.FromFile(@"..\..\..\minishrek.png"); // картинка 6
+                case "7":
+                    return Image.FromFile(@"..\..\..\da.png"); // картинка 7
+                case "8":
+                    return Image.FromFile(@"..\..\..\fiona.png"); // картинка 8
+                default:
+                    return null;
+            }
+        }
+
+        // Функция перезагрузки игры
         private void RestartGame()
         {
-            numbers = numbers.OrderBy(x => Guid.NewGuid()).ToList();
             for (int i = 0; i < pictures.Count; i++)
             {
-                pictures[i].Image = null;
-                pictures[i].Tag = numbers[i].ToString(); 
+                pictures[i].Image = null; // Очистка изображений
             }
             tries = 0;
             lblStatus.Text = "Mismatched: " + tries + " korda.";
-            lblTimeLeft.Text = "Jääb aega: " + totalTime;
+            lblTimeLeft.Text = "Jääb aega: " + totalTime + " sekundit";
             gameOver = false;
-            countDownTime = totalTime;
-            GameTimer.Start();
+            startTime = DateTime.Now; // Запоминаем время начала
         }
 
+        // Функция для проверки выбранных изображений
         private void CheckPictures(PictureBox A, PictureBox B)
         {
             if (firstChoice == secondChoice)
             {
-                A.Tag = null; // Очищаем Tag, если картинки совпадают
+                // Если изображения совпадают, очищаем тег
+                A.Tag = null;
                 B.Tag = null;
             }
             else
@@ -169,7 +189,7 @@ namespace Elemendid_vorm_TARpv23
             firstChoice = null;
             secondChoice = null;
 
-            // Если не совпадают, сбросим картинки через секунду
+            // Если изображения не совпадают, скрываем их через некоторое время
             if (A.Tag != null && B.Tag != null && A.Tag != B.Tag)
             {
                 System.Windows.Forms.Timer resetTimer = new System.Windows.Forms.Timer { Interval = 1000 };
@@ -182,18 +202,18 @@ namespace Elemendid_vorm_TARpv23
                 resetTimer.Start();
             }
 
-            // Проверка на завершение игры
+            // Проверяем, закончена ли игра
             if (pictures.All(o => o.Tag == null))
             {
                 GameOver("Suurepärane töö, sa võitsid!!!!");
             }
         }
 
+        // Функция окончания игры
         private void GameOver(string msg)
         {
-            GameTimer.Stop();
-            gameOver = true;
-            MessageBox.Show(msg); // Display the game over message
+            gameOver = true; // Игра окончена
+            MessageBox.Show(msg); // Показываем сообщение об окончании игры
         }
     }
 }
