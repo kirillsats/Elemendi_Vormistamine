@@ -1,6 +1,6 @@
 ﻿namespace Elemendid_vormis_TARpv23
 {
-    partial class KolmasVorm
+    partial class EsimeneVorm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,13 +30,14 @@
         {
             SuspendLayout();
             // 
-            // KolmasVorm
+            // EsimeneVorm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Name = "KolmasVorm";
-            Text = "KolmasVorm";
+            Name = "EsimeneVorm";
+            Text = "EsimeneVorm";
+         
             ResumeLayout(false);
         }
 

@@ -64,4 +64,11 @@
     <description>Väga maitsev </description>
     <calories>854</calories>
   </food>
+  <food />
+  <food>
+    <name>arbuz</name>
+    <price>$2,0455468</price>
+    <description>Väga maitsev </description>
+    <calories>841</calories>
+  </food>
 </breakfast_menu>

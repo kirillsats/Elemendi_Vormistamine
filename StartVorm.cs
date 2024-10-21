@@ -13,7 +13,7 @@ namespace Elemendid_vormis_TARpv23
 {
     public partial class StartVorm : Form
     {
-        List<string> elemendid = new List<string> { "Nupp", "Silt", "Pilt", "Märkeruut", "Raadionupp", "Tekstikast", "Loetelu", "Tabel", "Dialoogi aknad", "Kalkulaator", "Game" };
+        List<string> elemendid = new List<string> { "Nupp", "Silt", "Pilt", "Märkeruut", "Raadionupp", "Tekstikast", "Loetelu", "Tabel", "Dialoogi aknad", "Vormid" };
 
         List<string> rbtn_list = new List<string> { "Üks", "Kaks", "Kolm" };
 
@@ -29,6 +29,8 @@ namespace Elemendid_vormis_TARpv23
         DataGridView dg;
         Button btnCalculator;
         Button btnKolmasVorm;
+        Button btnVormid;
+        Button btnEsimeneVorm;
         public StartVorm()
         {
 
@@ -66,26 +68,11 @@ namespace Elemendid_vormis_TARpv23
             pbox.Size = new Size(60, 60);
             pbox.Location = new Point(150, btn.Height + lbl.Height + 5);
             pbox.SizeMode = PictureBoxSizeMode.Zoom;
-            pbox.Image = Image.FromFile(@"..\..\..\ratas.png");
+            pbox.Image = Image.FromFile(@"..\..\..\princ.png");
             pbox.DoubleClick += Pbox_DoubleClick;
 
 
-            // Создание кнопки для калькулятора
-            btnCalculator = new Button();
-            btnCalculator.Text = "Открыть Калькулятор";
-            btnCalculator.Height = 50;
-            btnCalculator.Width = 150;
-            btnCalculator.Location = new Point(150, 400); // Позиция кнопки на форме
-            btnCalculator.Click += BtnCalculator_Click; // Подписка на событие
-
-            //Создание кнопки для игры
-            Button btnKolmasVorm = new Button();
-            btnKolmasVorm.Text = "Ava Kolmas Vorm";
-            btnKolmasVorm.Height = 50;
-            btnKolmasVorm.Width = 150;
-            btnKolmasVorm.Location = new Point(150, 320); 
-            btnKolmasVorm.Click += BtnKolmasVorm_Click; 
-            Controls.Add(btnKolmasVorm);
+            
             
 
         }
@@ -140,6 +127,13 @@ namespace Elemendid_vormis_TARpv23
             Kalkulaator kalkulaator = new Kalkulaator(); // Создание нового экземпляра калькулятора
             kalkulaator.Show(); // Показать калькулятор
         }
+        
+        private void BtnEsimeneVorm_Click(object? sender, EventArgs e)
+        {
+            EsimeneVorm esimeneVorm = new EsimeneVorm(600,700);
+            esimeneVorm.Show();
+        }
+
 
         private void Tree_AfterSelect(object? sender, TreeViewEventArgs e)
         {
@@ -256,14 +250,39 @@ namespace Elemendid_vormis_TARpv23
                     MessageBox.Show("Oli sisestatud " + text);
                 }
             }
-            else if (e.Node.Text == "Kalkulaator")  
+            else if (e.Node.Text == "Vormid")  
             {
-                Controls.Add(btnCalculator); // Добавляем кнопку калькулятора на форму при выборе узла
-            }
-            else if (e.Node.Text == "Game") 
-            {
+                // Создание кнопки для калькулятора
+                btnCalculator = new Button();
+                btnCalculator.Text = "Ava kalkulaator";
+                btnCalculator.Height = 50;
+                btnCalculator.Width = 150;
+                btnCalculator.Location = new Point(400, 400); 
+                btnCalculator.Click += BtnCalculator_Click; 
+
+                //Создание кнопки для игры
+                Button btnKolmasVorm = new Button();
+                btnKolmasVorm.Text = "Ava Mäng";
+                btnKolmasVorm.Height = 50;
+                btnKolmasVorm.Width = 150;
+                btnKolmasVorm.Location = new Point(400, 350);
+                btnKolmasVorm.Click += BtnKolmasVorm_Click;
                 Controls.Add(btnKolmasVorm);
+                Controls.Add(btnVormid);
+                Controls.Add(btnCalculator);
+                
+
+                Button btnEsimeneVorm = new Button();
+                btnEsimeneVorm.Text = "Ava Pildid";
+                btnEsimeneVorm.Height = 50;
+                btnEsimeneVorm.Width = 150;
+                btnEsimeneVorm.Location = new Point(400, 300);
+                btnEsimeneVorm.Click += BtnEsimeneVorm_Click;
+                Controls.Add(btnEsimeneVorm);  
+
+
             }
+          
 
 
 

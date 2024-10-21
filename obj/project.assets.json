@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\opilane\\Source\\Repos\\Elemendi_Vormistamine1\\Elemendid_vormis_TARpv23.csproj",
+      "projectUniqueName": "C:\\Users\\opilane\\Source\\Repos\\Elemendi_Vormistamine_\\Elemendid_vormis_TARpv23.csproj",
       "projectName": "Elemendid_vormis_TARpv23",
-      "projectPath": "C:\\Users\\opilane\\Source\\Repos\\Elemendi_Vormistamine1\\Elemendid_vormis_TARpv23.csproj",
+      "projectPath": "C:\\Users\\opilane\\Source\\Repos\\Elemendi_Vormistamine_\\Elemendid_vormis_TARpv23.csproj",
       "packagesPath": "C:\\Users\\opilane\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\opilane\\Source\\Repos\\Elemendi_Vormistamine1\\obj\\",
+      "outputPath": "C:\\Users\\opilane\\Source\\Repos\\Elemendi_Vormistamine_\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
