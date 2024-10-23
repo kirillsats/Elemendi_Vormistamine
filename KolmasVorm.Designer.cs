@@ -37,6 +37,7 @@
             ClientSize = new Size(800, 450);
             Name = "KolmasVorm";
             Text = "KolmasVorm";
+            Load += KolmasVorm_Load;
             ResumeLayout(false);
         }
 

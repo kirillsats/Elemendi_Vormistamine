@@ -37,7 +37,7 @@
             ClientSize = new Size(800, 450);
             Name = "EsimeneVorm";
             Text = "EsimeneVorm";
-         
+            Load += EsimeneVorm_Load;
             ResumeLayout(false);
         }
 

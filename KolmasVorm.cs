@@ -16,6 +16,7 @@ namespace Elemendid_vormis_TARpv23
         Label lblStatus, lblTimeLeft;
         DateTime startTime;
         int totalTime;
+        int cardCount;
         bool gameOver = false;
         System.Windows.Forms.Timer gameTimer;
 
@@ -49,32 +50,39 @@ namespace Elemendid_vormis_TARpv23
 
             // Добавляем кнопки для выбора сложности
             Button btnEasy = new Button();
-            btnEasy.Text = "Легкий";
+            btnEasy.Text = "Lihtne";
             btnEasy.Location = new Point(500, 160);
-            btnEasy.Click += (s, e) => SetDifficulty(60);
+            btnEasy.Click += (s, e) => SetDifficulty(60, 8); // Легкий уровень - 8 карточек
             this.Controls.Add(btnEasy);
 
             Button btnNormal = new Button();
-            btnNormal.Text = "Нормальный";
+            btnNormal.Text = "Normaalne";
             btnNormal.Location = new Point(500, 190);
-            btnNormal.Click += (s, e) => SetDifficulty(40);
+            btnNormal.Click += (s, e) => SetDifficulty(40, 12); // Нормальный уровень - 12 карточек
             this.Controls.Add(btnNormal);
 
             Button btnHard = new Button();
-            btnHard.Text = "Сложный";
+            btnHard.Text = "Raske";
             btnHard.Location = new Point(500, 220);
-            btnHard.Click += (s, e) => SetDifficulty(25);
+            btnHard.Click += (s, e) => SetDifficulty(25, 16); // Сложный уровень - 16 карточек
             this.Controls.Add(btnHard);
 
-            LoadImages(); // Renamed from LoadPictures
-            RestartGame();
+            Button btnRestart = new Button();
+            btnRestart.Text = "Taaskäivitamine";
+            btnRestart.Location = new Point(500, 250);
+            btnRestart.Click += (s, e) => RestartGame();
+            this.Controls.Add(btnRestart);
+
+            RestartGame(); // Инициализация игры с выбранным уровнем
         }
 
+
         // Метод для установки времени на основе уровня сложности
-        private void SetDifficulty(int time)
+        private void SetDifficulty(int time, int cards)
         {
-            totalTime = time;
-            RestartGame();
+            totalTime = time;  // Устанавливаем время для выбранного уровня
+            cardCount = cards; // Устанавливаем количество карточек для выбранного уровня
+            RestartGame();     // Перезапускаем игру с новыми параметрами
         }
 
         // Обработчик события тика таймера
@@ -94,7 +102,7 @@ namespace Elemendid_vormis_TARpv23
             }
         }
 
-        // Renamed LoadPictures to LoadImages
+        
         private void LoadImages()
         {
             numbers = numbers.OrderBy(x => Guid.NewGuid()).ToList();
@@ -130,8 +138,9 @@ namespace Elemendid_vormis_TARpv23
             if (gameOver) return;
 
             PictureBox clickedPic = sender as PictureBox;
+            int index = pictures.IndexOf(clickedPic); // Получаем индекс картинки
 
-            if (clickedPic.Image != null) return;
+            if (clickedPic.Image != null) return; // Проверяем, если картинка уже открыта
 
             if ((DateTime.Now - startTime).TotalSeconds >= totalTime)
             {
@@ -142,14 +151,14 @@ namespace Elemendid_vormis_TARpv23
             if (firstChoice == null)
             {
                 picA = clickedPic;
-                picA.Image = LoadImageByIndex(int.Parse((string)picA.Tag)); // Assuming Tag is a valid number
-                firstChoice = (string)picA.Tag;
+                picA.Image = LoadImageByIndex(numbers[index]); // Загружаем картинку по индексу
+                firstChoice = index.ToString(); // Сохраняем индекс первой картинки
             }
             else if (secondChoice == null)
             {
                 picB = clickedPic;
-                picB.Image = LoadImageByIndex(int.Parse((string)picB.Tag));
-                secondChoice = (string)picB.Tag;
+                picB.Image = LoadImageByIndex(numbers[index]); // Загружаем картинку по индексу
+                secondChoice = index.ToString(); // Сохраняем индекс второй картинки
 
                 CheckPictures(picA, picB);
             }
@@ -180,10 +189,18 @@ namespace Elemendid_vormis_TARpv23
 
         private void RestartGame()
         {
+            // Перемешиваем список заново перед каждой новой игрой
+            numbers = numbers.OrderBy(x => Guid.NewGuid()).ToList();
+
+            LoadImages(); // Загружаем изображения на форму
+
+            // Сбрасываем все картинки
             foreach (var pic in pictures)
             {
-                pic.Image = null;
+                pic.Image = null;         // Убираем изображение с картинки
+                pic.Enabled = true;       // Делаем картинку снова кликабельной
             }
+
             tries = 0;
             lblStatus.Text = "Mismatched: " + tries + " korda.";
             lblTimeLeft.Text = "Jääb aega: " + totalTime + " sekundit";
@@ -193,23 +210,32 @@ namespace Elemendid_vormis_TARpv23
             gameTimer.Start();
         }
 
+
+
+
         private void CheckPictures(PictureBox A, PictureBox B)
         {
-            if (firstChoice == secondChoice)
+            int indexA = int.Parse(firstChoice);
+            int indexB = int.Parse(secondChoice);
+
+            // Проверяем, совпадают ли значения картинок
+            if (numbers[indexA] == numbers[indexB])
             {
-                A.Tag = null;
-                B.Tag = null;
+                // Отключаем возможность кликов по картинкам
+                pictures[indexA].Enabled = false;
+                pictures[indexB].Enabled = false;
+
+                // Оставляем картинки открытыми
+                A.Image = LoadImageByIndex(numbers[indexA]);
+                B.Image = LoadImageByIndex(numbers[indexB]);
             }
             else
             {
+                // Если не совпали, увеличиваем счетчик ошибок
                 tries++;
                 lblStatus.Text = "Mismatched " + tries + " korda.";
-            }
-            firstChoice = null;
-            secondChoice = null;
 
-            if (A.Tag != null && B.Tag != null && A.Tag != B.Tag)
-            {
+                // Устанавливаем таймер для скрытия изображений
                 System.Windows.Forms.Timer resetTimer = new System.Windows.Forms.Timer { Interval = 1000 };
                 resetTimer.Tick += (s, e) =>
                 {
@@ -220,17 +246,28 @@ namespace Elemendid_vormis_TARpv23
                 resetTimer.Start();
             }
 
-            if (pictures.All(o => o.Tag == null))
+            // Сбрасываем выбор
+            firstChoice = null;
+            secondChoice = null;
+
+            // Проверяем, выиграл ли игрок (все картинки отключены)
+            if (pictures.All(o => o.Enabled == false))
             {
                 GameOver("Suurepärane töö, sa võitsid!!!!");
             }
         }
+
 
         private void GameOver(string msg)
         {
             gameOver = true;
             gameTimer.Stop();
             MessageBox.Show(msg);
+        }
+
+        private void KolmasVorm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

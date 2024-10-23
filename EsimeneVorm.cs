@@ -13,19 +13,17 @@ namespace Elemendid_vormis_TARpv23
     public partial class EsimeneVorm : Form
     {
         Button btn;
-        Button btn2;
-        Button btn3;
-        Button btn4;
+        Button btnLeft; // Кнопка для перемещения влево
+        Button btnRight; // Кнопка для перемещения вправо
+        Button btn3; // Кнопка для удаления изображения
+        Button btn4; // Кнопка для изменения цвета фона
         PictureBox pb1 = new PictureBox();
         ColorDialog cd1 = new ColorDialog();
         System.Windows.Forms.CheckBox chk1;
         OpenFileDialog ofd = new OpenFileDialog();
         Button btnChangePicture;
-        Label lblTime;
-        System.Windows.Forms.Timer timeTimer = new System.Windows.Forms.Timer();
-        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-        List<string> imageFiles = new List<string> { @"..\..\..\osel.png", @"..\..\..\shokshrek.jpg", @"..\..\..\kot.png" };
-        int currentImageIndex = 0;
+        List<string> imageFiles = new List<string>(); // Список загруженных изображений
+        int currentImageIndex = -1; // Индекс текущего изображения
 
         public EsimeneVorm(int h, int w)
         {
@@ -33,54 +31,65 @@ namespace Elemendid_vormis_TARpv23
             this.Width = w;
             this.Text = "Pildid";
 
-            // Создание и добавление кнопок
-            btn = new Button();
-            btn.Text = "Close";
-            btn.Location = new Point(300, 440);
-            btn.Click += closeButton_Click;
-            Controls.Add(btn);
+            // Создание панели для кнопок
+            FlowLayoutPanel panel = new FlowLayoutPanel();
+            panel.Dock = DockStyle.Bottom;
+            panel.Height = 100;
+            panel.BackColor = SystemColors.Control;
 
-            btn2 = new Button();
-            btn2.Text = "Show picture";
-            btn2.Location = new Point(375, 440);
-            btn2.Click += Click_ShowPictureButton;
-            Controls.Add(btn2);
+            // Создание и добавление кнопок
+            btnLeft = new Button();
+            btnLeft.Text = "Vasak"; // Кнопка для перемещения влево
+            btnLeft.Click += btnLeft_Click;
+            panel.Controls.Add(btnLeft);
+
+            btnRight = new Button();
+            btnRight.Text = "Parempoolne"; // Кнопка для перемещения вправо
+            btnRight.Click += btnRight_Click;
+            panel.Controls.Add(btnRight);
 
             btn3 = new Button();
-            btn3.Text = "Clear Picture";
-            btn3.Location = new Point(450, 440);
+            btn3.Text = "Kustuta pilti"; // Кнопка для удаления изображения
             btn3.Click += clearButton_Click;
-            Controls.Add(btn3);
+            panel.Controls.Add(btn3);
 
             btn4 = new Button();
-            btn4.Text = "Set the background color";
-            btn4.Location = new Point(525, 440);
+            btn4.Text = "Värv"; // Кнопка для изменения цвета фона
             btn4.Click += backgroundButton_Click;
-            Controls.Add(btn4);
+            panel.Controls.Add(btn4);
+
+            btn = new Button();
+            btn.Text = "Sule"; // Кнопка закрытия
+            btn.Click += closeButton_Click;
+            panel.Controls.Add(btn);
 
             // CheckBox
             chk1 = new System.Windows.Forms.CheckBox();
             chk1.Checked = false;
             chk1.Text = "Stretch";
             chk1.Size = new Size(75, 20);
-            chk1.Location = new Point(20, 440);
             chk1.Click += checkBox1_CheckedChanged;
-            Controls.Add(chk1);
+            panel.Controls.Add(chk1);
 
-            // Добавляем функции изменения изображения и слайдшоу
-            AddChangePictureButton();
-            AddImageSlideshowFunctionality();
-            AddTimeDisplayFunctionality();
+            // Добавление кнопки изменения изображения на панель
+            AddChangePictureButton(panel);
+
+            // Добавляем панель на форму
+            Controls.Add(panel);
+            Controls.Add(pb1);
+
+            // Настройка PictureBox
+            pb1.Dock = DockStyle.Fill; // Заполняет всю доступную область
+            pb1.SizeMode = PictureBoxSizeMode.StretchImage; // Растягиваем изображение
         }
 
         // Добавление кнопки изменения изображения
-        private void AddChangePictureButton()
+        private void AddChangePictureButton(FlowLayoutPanel panel)
         {
             btnChangePicture = new Button();
-            btnChangePicture.Text = "Change Picture";
-            btnChangePicture.Location = new Point(700, 440);
+            btnChangePicture.Text = "Lisa pilti"; // Кнопка для добавления изображения
             btnChangePicture.Click += btnChangePicture_Click;
-            Controls.Add(btnChangePicture);
+            panel.Controls.Add(btnChangePicture);
         }
 
         private void btnChangePicture_Click(object sender, EventArgs e)
@@ -88,51 +97,18 @@ namespace Elemendid_vormis_TARpv23
             ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                pb1.Image = Image.FromFile(ofd.FileName);
+                imageFiles.Add(ofd.FileName); // Добавляем загруженное изображение в список
+                currentImageIndex = imageFiles.Count - 1; // Устанавливаем индекс на последнее добавленное изображение
+                pb1.Image = Image.FromFile(imageFiles[currentImageIndex]); // Показываем загруженное изображение
             }
-        }
-
-        // Добавление функции слайд-шоу
-        private void AddImageSlideshowFunctionality()
-        {
-            timer.Interval = 3000; // Интервал 3 секунды
-            timer.Tick += timer_Tick;
-            timer.Start();
-        }
-
-        private void timer_Tick(object sender, EventArgs e)
-        {
-            if (imageFiles.Count > 0)
-            {
-                pb1.Image = Image.FromFile(imageFiles[currentImageIndex]);
-                currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
-            }
-        }
-
-        // Отображение текущего времени
-        private void AddTimeDisplayFunctionality()
-        {
-            lblTime = new Label();
-            lblTime.Text = DateTime.Now.ToString("HH:mm:ss");
-            lblTime.Font = new Font("Arial", 14, FontStyle.Bold);
-            lblTime.Location = new Point(20, 20);
-            lblTime.AutoSize = true;
-            Controls.Add(lblTime);
-
-            timeTimer.Interval = 1000; // 1 секунда
-            timeTimer.Tick += timeTimer_Tick;
-            timeTimer.Start();
-        }
-
-        private void timeTimer_Tick(object sender, EventArgs e)
-        {
-            lblTime.Text = DateTime.Now.ToString("HH:mm:ss");
         }
 
         // Кнопка "Clear Picture"
         private void clearButton_Click(object sender, EventArgs e)
         {
             pb1.Image = null;
+            imageFiles.Clear(); // Очищаем список загруженных изображений
+            currentImageIndex = -1; // Сбрасываем индекс изображения
         }
 
         // Установка фона
@@ -150,13 +126,26 @@ namespace Elemendid_vormis_TARpv23
             this.Close();
         }
 
-        // Показать картинку
-        private void Click_ShowPictureButton(object? sender, EventArgs e)
+        // Кнопка для перемещения влево
+        private void btnLeft_Click(object sender, EventArgs e)
         {
-            pb1.Image = Image.FromFile(@"..\..\..\ratas.png");
-            pb1.Location = new Point(0, 0);
-            pb1.Size = new Size(800, 900);
-            this.Controls.Add(pb1);
+            if (imageFiles.Count > 0)
+            {
+                currentImageIndex--; // Уменьшаем индекс
+                if (currentImageIndex < 0) currentImageIndex = imageFiles.Count - 1; // Циклическое перемещение
+                pb1.Image = Image.FromFile(imageFiles[currentImageIndex]); // Показать изображение
+            }
+        }
+
+        // Кнопка для перемещения вправо
+        private void btnRight_Click(object sender, EventArgs e)
+        {
+            if (imageFiles.Count > 0)
+            {
+                currentImageIndex++; // Увеличиваем индекс
+                if (currentImageIndex >= imageFiles.Count) currentImageIndex = 0; // Циклическое перемещение
+                pb1.Image = Image.FromFile(imageFiles[currentImageIndex]); // Показать изображение
+            }
         }
 
         // Изменение режима отображения картинки
@@ -166,6 +155,11 @@ namespace Elemendid_vormis_TARpv23
                 pb1.SizeMode = PictureBoxSizeMode.StretchImage;
             else
                 pb1.SizeMode = PictureBoxSizeMode.Normal;
+        }
+
+        private void EsimeneVorm_Load(object sender, EventArgs e)
+        {
+            // Можно добавить любую инициализацию здесь, если потребуется
         }
     }
 }
