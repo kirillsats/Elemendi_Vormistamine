@@ -13,8 +13,8 @@ namespace Elemendid_vormis_TARpv23
     public partial class EsimeneVorm : Form
     {
         Button btn;
-        Button btnLeft; // Кнопка для перемещения влево
-        Button btnRight; // Кнопка для перемещения вправо
+        Button btnLeft; 
+        Button btnRight; 
         Button btn3; // Кнопка для удаления изображения
         Button btn4; // Кнопка для изменения цвета фона
         PictureBox pb1 = new PictureBox();
@@ -22,6 +22,8 @@ namespace Elemendid_vormis_TARpv23
         System.Windows.Forms.CheckBox chk1;
         OpenFileDialog ofd = new OpenFileDialog();
         Button btnChangePicture;
+        Button btnRotateLeft;
+        Button btnRotateRight;
         List<string> imageFiles = new List<string>(); // Список загруженных изображений
         int currentImageIndex = -1; // Индекс текущего изображения
 
@@ -63,6 +65,17 @@ namespace Elemendid_vormis_TARpv23
             btn.Click += closeButton_Click;
             panel.Controls.Add(btn);
 
+            btnRotateLeft = new Button();
+            btnRotateLeft.Text = "paremale 90°";
+            btnRotateLeft.Click += btnRotateLeft_Click;
+            panel.Controls.Add(btnRotateLeft);
+
+            btnRotateRight = new Button();
+            btnRotateRight.Text = "vasakule 90°";
+            btnRotateRight.Click += btnRotateRight_Click;
+            panel.Controls.Add(btnRotateRight);
+
+
             // CheckBox
             chk1 = new System.Windows.Forms.CheckBox();
             chk1.Checked = false;
@@ -82,6 +95,25 @@ namespace Elemendid_vormis_TARpv23
             pb1.Dock = DockStyle.Fill; // Заполняет всю доступную область
             pb1.SizeMode = PictureBoxSizeMode.StretchImage; // Растягиваем изображение
         }
+
+        private void btnRotateLeft_Click(object sender, EventArgs e)
+        {
+            if (pb1.Image != null)
+            {
+                pb1.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                pb1.Refresh();
+            }
+        }
+
+        private void btnRotateRight_Click(object sender, EventArgs e)
+        {
+            if (pb1.Image != null)
+            {
+                pb1.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                pb1.Refresh();
+            }
+        }
+
 
         // Добавление кнопки изменения изображения
         private void AddChangePictureButton(FlowLayoutPanel panel)
@@ -157,9 +189,10 @@ namespace Elemendid_vormis_TARpv23
                 pb1.SizeMode = PictureBoxSizeMode.Normal;
         }
 
+
         private void EsimeneVorm_Load(object sender, EventArgs e)
         {
-            // Можно добавить любую инициализацию здесь, если потребуется
+            
         }
     }
 }

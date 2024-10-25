@@ -1,6 +1,6 @@
 ﻿namespace Elemendid_vormis_TARpv23
 {
-    partial class Kalkulaator
+    partial class Kalkulaator : Form // Добавьте наследование от Form
     {
         /// <summary>
         /// Required designer variable.
@@ -37,10 +37,16 @@
             ClientSize = new Size(800, 450);
             Name = "Kalkulaator";
             Text = "Kalkulaator";
-            Load += Kalkulaator_Load;
+            
             ResumeLayout(false);
         }
 
         #endregion
+
+        // Метод обработчика события Load
+        private void Kalkulaator_Load(object sender, EventArgs e)
+        {
+            // Здесь можно инициализировать элементы управления
+        }
     }
 }

@@ -16,11 +16,13 @@ namespace Elemendid_vormis_TARpv23
         private Button btnKontrolliVastuseid; // Vastuste kontrollimise nupp
         private Button btnUuendaKüsimused; // Küsimuste uuendamise nupp
         private Label lblAegAlles;
+        private Button btnChangeTheme; // Nupp teema vahetamiseks
         private System.Windows.Forms.Timer taimer;
         private int aegaAlles = 30;
         private string[] küsimused;
         private int[] vastused;
         private Random juhuslik;
+        private bool isDarkTheme = false; // Muutujad teema jälgimiseks
 
         public Kalkulaator()
         {
@@ -33,7 +35,7 @@ namespace Elemendid_vormis_TARpv23
         private void LooKalkulaatoriUI()
         {
             this.Text = "Matemaatiline Test";
-            this.Size = new Size(400, 500); 
+            this.Size = new Size(400, 500);
 
             lblAegAlles = new Label
             {
@@ -74,10 +76,18 @@ namespace Elemendid_vormis_TARpv23
             btnUuendaKüsimused.Click += BtnUuendaKüsimused_Click;
             this.Controls.Add(btnUuendaKüsimused);
 
+            // Nupp teema vahetamiseks
+            btnChangeTheme = new Button { Text = "Vaheta teemat", Location = new Point(250, 370), Size = new Size(120, 50) };
+            btnChangeTheme.Click += BtnChangeTheme_Click;
+            this.Controls.Add(btnChangeTheme);
+
             // Taimer
             taimer = new System.Windows.Forms.Timer();
             taimer.Interval = 1000;
             taimer.Tick += Taimer_Tick;
+
+            // Alustame esialgses teemaga
+            UuendaTeema();
         }
 
         private void GenereeriJuhuslikudKüsimused()
@@ -163,7 +173,6 @@ namespace Elemendid_vormis_TARpv23
             }
         }
 
-
         private void BtnUuendaKüsimused_Click(object sender, EventArgs e)
         {
             // Uuendame küsimused ja taaskäivitame taimeri
@@ -180,9 +189,52 @@ namespace Elemendid_vormis_TARpv23
             lblAegAlles.Text = "Aega alles: 30 sekundit";
         }
 
-        private void Kalkulaator_Load(object sender, EventArgs e)
+        private void BtnChangeTheme_Click(object sender, EventArgs e)
         {
+            isDarkTheme = !isDarkTheme; // Muudame teemat
+            UuendaTeema(); // Uuendame teema
+        }
 
+        private void UuendaTeema()
+        {
+            if (isDarkTheme)
+            {
+                // Tumeda teema seaded
+                this.BackColor = Color.Black;
+                lblAegAlles.ForeColor = Color.White;
+                foreach (var textBox in vastuseSisendid)
+                {
+                    textBox.BackColor = Color.Gray;
+                    textBox.ForeColor = Color.White;
+                }
+                foreach (Control control in this.Controls)
+                {
+                    if (control is Button)
+                    {
+                        control.BackColor = Color.DimGray;
+                        control.ForeColor = Color.White;
+                    }
+                }
+            }
+            else
+            {
+                // Heleda teema seaded
+                this.BackColor = Color.White;
+                lblAegAlles.ForeColor = Color.Black;
+                foreach (var textBox in vastuseSisendid)
+                {
+                    textBox.BackColor = Color.White;
+                    textBox.ForeColor = Color.Black;
+                }
+                foreach (Control control in this.Controls)
+                {
+                    if (control is Button)
+                    {
+                        control.BackColor = Color.LightGray;
+                        control.ForeColor = Color.Black;
+                    }
+                }
+            }
         }
     }
 }

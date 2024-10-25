@@ -233,7 +233,7 @@ namespace Elemendid_vormis_TARpv23
             {
                 // Если не совпали, увеличиваем счетчик ошибок
                 tries++;
-                lblStatus.Text = "Mismatched " + tries + " korda.";
+                lblStatus.Text = "Kalkulaator " + tries + " korda.";
 
                 // Устанавливаем таймер для скрытия изображений
                 System.Windows.Forms.Timer resetTimer = new System.Windows.Forms.Timer { Interval = 1000 };
